@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expense Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="toast"></div>
+
+<header>
+  <h1>💸 Expense Tracker</h1>
+  <div class="header-right">
+    <span id="current-month"></span>
+    <button class="hdr-btn" id="export-btn">⬇ Export CSV</button>
+    <button class="hdr-btn" id="clear-btn">🗑 Clear All</button>
+  </div>
+</header>
+
+<div class="budget-bar-section">
+  <label for="budget-input">Monthly Budget ₹</label>
+  <input type="number" id="budget-input" placeholder="e.g. 5000" min="0" />
+  <div class="bar-track">
+    <div class="bar-fill" id="bar-fill"></div>
+  </div>
+  <span id="budget-pct">—</span>
+</div>
+
+<section class="summary-section">
+  <div class="stat-card" id="total-card">
+    <p class="card-label">Total Spent</p>
+    <p class="card-value" id="total-amount">₹0</p>
+  </div>
+  <div class="stat-card" id="month-card">
+    <p class="card-label">This Month</p>
+    <p class="card-value" id="month-amount">₹0</p>
+  </div>
+  <div class="stat-card" id="count-card">
+    <p class="card-label">Transactions</p>
+    <p class="card-value" id="transaction-count">0</p>
+  </div>
+  <div class="stat-card" id="avg-card">
+    <p class="card-label">Avg / Expense</p>
+    <p class="card-value" id="avg-amount">₹0</p>
+  </div>
+</section>
+
+<div class="main-grid">
+
+  <section class="form-section">
+    <p class="section-title">Add New Expense</p>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="expense-amount">Amount (₹)</label>
+        <input type="number" id="expense-amount" placeholder="0" min="0" />
+      </div>
+      <div class="form-group">
+        <label for="expense-date">Date</label>
+        <input type="date" id="expense-date" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="expense-category">Category</label>
+      <select id="expense-category">
+        <option value="Food">🍔 Food</option>
+        <option value="Travel">🚇 Travel</option>
+        <option value="Shopping">🛍️ Shopping</option>
+        <option value="Education">📚 Education</option>
+        <option value="Health">💊 Health</option>
+        <option value="Entertainment">🎮 Entertainment</option>
+        <option value="Other">📦 Other</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="expense-name">Description</label>
+      <input type="text" id="expense-name" placeholder="e.g. Burger King" autocomplete="off" />
+    </div>
+
+    <button id="add-btn">+ Add Expense</button>
+
+    <div class="form-divider"></div>
+
+    <p class="quick-label">Quick Add</p>
+    <div class="quick-chips" id="quick-chips">
+      <span class="chip" data-name="Tea / Coffee" data-cat="Food"          data-amt="30">☕ Tea ₹30</span>
+      <span class="chip" data-name="Auto Rickshaw" data-cat="Travel"        data-amt="50">🛺 Auto ₹50</span>
+      <span class="chip" data-name="Lunch"          data-cat="Food"          data-amt="120">🍱 Lunch ₹120</span>
+      <span class="chip" data-name="Metro"          data-cat="Travel"        data-amt="40">🚇 Metro ₹40</span>
+      <span class="chip" data-name="Snacks"         data-cat="Food"          data-amt="60">🍟 Snacks ₹60</span>
+      <span class="chip" data-name="Online Course"  data-cat="Education"     data-amt="299">📚 Course ₹299</span>
+    </div>
+  </section>
+
+  <div class="right-col">
+
+    <section class="chart-section">
+      <div class="chart-top">
+        <p class="section-title" style="margin:0;">Spending by Category</p>
+        <div class="month-nav">
+          <button class="mnav-btn" id="prev-month">&#8249;</button>
+          <span id="month-display"></span>
+          <button class="mnav-btn" id="next-month">&#8250;</button>
+        </div>
+      </div>
+      <div class="chart-inner" id="chart-inner">
+        <p id="no-chart-msg">Add expenses to see the chart</p>
+      </div>
+    </section>
+
+    <section class="list-section">
+      <div class="list-header">
+        <p class="section-title" style="margin:0;">Expenses</p>
+        <div class="filter-buttons" id="filter-buttons">
+          <button class="filter-btn active" data-filter="All">All</button>
+          <button class="filter-btn" data-filter="Food">🍔 Food</button>
+          <button class="filter-btn" data-filter="Travel">🚇 Travel</button>
+          <button class="filter-btn" data-filter="Shopping">🛍️ Shopping</button>
+          <button class="filter-btn" data-filter="Education">📚 Edu</button>
+          <button class="filter-btn" data-filter="Health">💊 Health</button>
+          <button class="filter-btn" data-filter="Entertainment">🎮 Fun</button>
+          <button class="filter-btn" data-filter="Other">📦 Other</button>
+        </div>
+      </div>
+
+      <input type="text" id="search-input" placeholder="🔍  Search expenses..." />
+
+      <div class="sort-row">
+        <span class="sort-label">Sort:</span>
+        <button class="sort-btn active" data-sort="date-desc">Newest</button>
+        <button class="sort-btn" data-sort="date-asc">Oldest</button>
+        <button class="sort-btn" data-sort="amt-desc">High ₹</button>
+        <button class="sort-btn" data-sort="amt-asc">Low ₹</button>
+      </div>
+
+      <div id="expense-list">
+        <p id="empty-msg">No expenses yet. Add one above!</p>
+      </div>
+    </section>
+
+  </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
